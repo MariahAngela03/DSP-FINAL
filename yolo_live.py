@@ -12,9 +12,9 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
     # Check if the webcam is opened successfully
     if not cap.isOpened():
         st.error(f"Error: Could not open webcam. Error code: {cap.isOpened()}")  # This will print 'False'
-        st.error(f"Additional info: {cap.getBackendName()}")  # Check which backend OpenCV is using
+        # Print diagnostic information to further investigate
+        st.error(f"Camera properties: Frame Width={cap.get(cv2.CAP_PROP_FRAME_WIDTH)}, Frame Height={cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
         return
-
 
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
