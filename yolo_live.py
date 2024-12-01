@@ -7,21 +7,11 @@ from draw_utils_live import plot_boxes_live, color_map_live
 # Function to handle live webcam detection
 def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 720)):
     frame_width, frame_height = webcam_resolution
-    cap = cv2.VideoCapture(0)  # Open the webcam
+    cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
-    model = YOLO(model_path).to('cpu')  # Load the YOLO model
-    frame_placeholder = st.empty()  # Create a placeholder for the image
-
-    if not cap.isOpened():
-        print("Error: Could not open webcam.")
-    else:
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                print("Error: Failed to capture frame.")
-                break
-            cv2.imshow("Webcam Feed", frame)
+    model = YOLO(model_path).to('cpu')
+    frame_placeholder, object_description_placeholder = st.empty(), st.empty()
 
     # Queue to store the latest 5 object descriptions
     description_queue = []
