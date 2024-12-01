@@ -7,7 +7,13 @@ from draw_utils_live import plot_boxes_live, color_map_live
 # Function to handle live webcam detection
 def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 720)):
     frame_width, frame_height = webcam_resolution
-    cap = cv2.VideoCapture(0)  # Open the webcam
+    cap = cv2.VideoCapture(0)  # Open the webcam (0 is usually the default camera)
+    
+    # Check if the webcam is opened successfully
+    if not cap.isOpened():
+        st.error("Error: Could not open webcam.")
+        return
+
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
     model = YOLO(model_path).to('cpu')  # Load the YOLO model
@@ -19,11 +25,16 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
 
     while True:
         ret, frame = cap.read()
+        
+        # Log the result of capturing the frame
         if not ret:
             st.error("Failed to capture image from webcam.")
             break
+        else:
+            st.text(f"Captured frame successfully, ret: {ret}")
         
-        results = model(frame)  # Run YOLO model on the frame
+        # Run YOLO model on the frame
+        results = model(frame)
         frame, labels, descriptions = plot_boxes_live(results, frame, model, color_map_live)
 
         # Add new descriptions to the queue (FIFO: First In First Out)
@@ -53,3 +64,6 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
         time.sleep(0.1)  # Add a short delay to prevent high CPU usage
 
     cap.release()  # Release the webcam when done
+
+# Call the function (ensure to provide plot_boxes and model_path)
+# live_detection(plot_boxes_live, model_path="best.pt")
