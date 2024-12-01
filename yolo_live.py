@@ -53,6 +53,3 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
         time.sleep(0.1)  # Add a short delay to prevent high CPU usage
 
     cap.release()  # Release the webcam when done
-
-if __name__ == "__main__":
-    live_detection(plot_boxes_live)
