@@ -5,7 +5,7 @@ from ultralytics import YOLO
 from draw_utils_live import plot_boxes_live, color_map_live
 
 # Function to handle live webcam detection
-def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 720)):
+def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(640, 480)):
     frame_width, frame_height = webcam_resolution
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # Use DirectShow for Windows (change for Linux)
 
