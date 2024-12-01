@@ -10,8 +10,11 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
+    
     model = YOLO(model_path).to('cpu')
-    frame_placeholder, object_description_placeholder = st.empty(), st.empty()
+    
+    frame_placeholder = st.empty()
+    object_description_placeholder = st.empty()
 
     # Queue to store the latest 5 object descriptions
     description_queue = []
@@ -19,7 +22,9 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
     while True:
         ret, frame = cap.read()
         if not ret:
+            st.write("Error: Failed to capture frame")
             break
+        
         results = model(frame)
         frame, labels, descriptions = plot_boxes_live(results, frame, model, color_map_live)
         current_time = time.time()
@@ -47,7 +52,13 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
         frame_placeholder.image(frame_rgb, channels="RGB", use_container_width=True)
         object_description_placeholder.markdown(description_display, unsafe_allow_html=True)
 
+        # Break the loop when the 'Esc' key is pressed
         if cv2.waitKey(1) & 0xFF == 27:
             break
 
     cap.release()
+
+if __name__ == "__main__":
+    # Start live detection
+    st.title("Live Object Detection")
+    live_detection(plot_boxes=plot_boxes_live)
