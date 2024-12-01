@@ -13,17 +13,15 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
     model = YOLO(model_path).to('cpu')  # Load the YOLO model
     frame_placeholder = st.empty()  # Create a placeholder for the image
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            st.error("Failed to capture image from webcam.")
-            break
-        
-        results = model(frame)  # Run YOLO model on the frame
-        frame, labels, descriptions = plot_boxes_live(results, frame, model, color_map_live)
-
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB for Streamlit
-        frame_placeholder.image(frame_rgb, channels="RGB", use_container_width=True)  # Display the image in Streamlit
+    if not cap.isOpened():
+        print("Error: Could not open webcam.")
+    else:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("Error: Failed to capture frame.")
+                break
+            cv2.imshow("Webcam Feed", frame)
 
     # Queue to store the latest 5 object descriptions
     description_queue = []
