@@ -6,22 +6,21 @@ from draw_utils_live import plot_boxes_live, color_map_live
 
 # Function to handle live webcam detection
 def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 720)):
-    frame_width, frame_height = webcam_resolution
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
     model = YOLO(model_path).to('cpu')
     frame_placeholder, object_description_placeholder = st.empty(), st.empty()
 
     # Queue to store the latest 5 object descriptions
     description_queue = []
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
-        results = model(frame)
-        frame, labels, descriptions = plot_boxes_live(results, frame, model, color_map_live)
+    # Use Streamlit's camera input
+    frame = st.camera_input("Capture an image from your webcam")
+
+    if frame is not None:
+        # Process the image captured by Streamlit's camera input
+        img_array = frame.to_numpy()  # Convert image to numpy array
+        results = model(img_array)
+
+        frame, labels, descriptions = plot_boxes_live(results, img_array, model, color_map_live)
         current_time = time.time()
 
         # Add new descriptions to the queue (FIFO: First In First Out)
@@ -46,8 +45,3 @@ def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(1280, 72
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_placeholder.image(frame_rgb, channels="RGB", use_container_width=True)
         object_description_placeholder.markdown(description_display, unsafe_allow_html=True)
-
-        if cv2.waitKey(1) & 0xFF == 27:
-            break
-
-    cap.release()
