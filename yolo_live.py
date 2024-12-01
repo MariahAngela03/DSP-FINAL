@@ -7,12 +7,13 @@ from draw_utils_live import plot_boxes_live, color_map_live
 # Function to handle live webcam detection
 def live_detection(plot_boxes, model_path="best.pt", webcam_resolution=(640, 480)):
     frame_width, frame_height = webcam_resolution
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # Use DirectShow for Windows (change for Linux)
+    cap = cv2.VideoCapture(0) 
 
     # Check if the webcam is opened successfully
     if not cap.isOpened():
-        st.error("Error: Could not open webcam.")
+        st.error(f"Error: Could not open webcam. Error code: {cap.isOpened()}")
         return
+
 
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
